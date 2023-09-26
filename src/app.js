@@ -1,16 +1,19 @@
 const express = require("express")
 const app = express()
-const PORT = process.env.PORT | 7000
+const dotenv = require("dotenv")
+dotenv.config()
 
-const allRoutes = require("./routes/index")
+const PORT = process.env.PORT | 7000
+const path = process.env.PATH_VERSION
+
+const allRoutes = require("./api/index")
+
+// const { connectToDB } = require("./config/connection")
+// console.log(connectToDB())
 
 app.use(express.json())
-app.use(allRoutes)
-
-// app.get("/", (req, res) => {
-//   res.send("Hello World!")
-// })
+app.use(path, allRoutes)
 
 app.listen(PORT, () => {
-  console.log(`Server Running at http://localhost:${PORT}`)
+  console.log(`Server Running at http://localhost:${PORT}${path}`)
 })
