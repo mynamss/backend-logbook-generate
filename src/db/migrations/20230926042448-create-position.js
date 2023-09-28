@@ -12,26 +12,21 @@ module.exports = {
       uuid: {
         type: Sequelize.UUID,
         primaryKey: true,
-        allowNull: false,
       },
       dept_name: {
         type: Sequelize.STRING,
       },
       created_at: {
         type: Sequelize.DATE,
-        allowNull: false,
       },
       updated_at: {
         type: Sequelize.DATE,
-        allowNull: false,
       },
       created_by: {
         type: Sequelize.BIGINT,
-        allowNull: true,
       },
       updated_by: {
         type: Sequelize.BIGINT,
-        allowNull: true,
       },
     })
   },

@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Role.init(
     {
-      uuid: DataTypes.STRING,
+      uuid: DataTypes.UUID,
       role_name: DataTypes.STRING,
       created_at: DataTypes.DATE,
       updated_at: DataTypes.DATE,
