@@ -1,21 +1,29 @@
-'use strict';
+"use strict"
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('mentors', {
+    await queryInterface.createTable("Outputs", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.BIGINT,
       },
+      user_id: {
+        type: Sequelize.BIGINT,
+        allowNull: false,
+      },
+      log_id: {
+        type: Sequelize.BIGINT,
+        allowNull: false,
+      },
       uuid: {
         type: Sequelize.UUID,
         primaryKey: true,
         allowNull: false,
       },
-      fullname: {
-        type: Sequelize.STRING
+      description: {
+        type: Sequelize.ARRAY,
       },
       created_at: {
         type: Sequelize.DATE,
@@ -33,9 +41,9 @@ module.exports = {
         type: Sequelize.BIGINT,
         allowNull: true,
       },
-    });
+    })
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('mentors');
-  }
-};
+    await queryInterface.dropTable("Outputs")
+  },
+}

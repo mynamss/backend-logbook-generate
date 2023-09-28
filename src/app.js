@@ -8,8 +8,8 @@ const path = process.env.PATH_VERSION
 
 const allRoutes = require("./api/index")
 
-// const { connectToDB } = require("./config/connection")
-// console.log(connectToDB())
+const { connectToDB } = require("./config/connection")
+connectToDB()
 
 app.use(express.json())
 app.use(path, allRoutes)

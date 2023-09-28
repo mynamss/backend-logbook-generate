@@ -12,6 +12,7 @@ module.exports = {
       uuid: {
         type: Sequelize.UUID,
         primaryKey: true,
+        allowNull: false,
       },
       role_name: {
         type: Sequelize.STRING,

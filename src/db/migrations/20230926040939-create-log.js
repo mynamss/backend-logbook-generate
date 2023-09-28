@@ -12,6 +12,7 @@ module.exports = {
       uuid: {
         type: Sequelize.UUID,
         primaryKey: true,
+        allowNull: false,
       },
       log_date: {
         type: Sequelize.STRING,

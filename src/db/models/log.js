@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "LogDate",
+      modelName: "logs",
       underscored: true,
     }
   )
