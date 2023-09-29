@@ -10,17 +10,30 @@ module.exports = {
         type: Sequelize.BIGINT,
       },
       user_id: {
-        type: Sequelize.BIGINT,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        references: {
+          model: "users",
+          key: "uuid",
+        },
       },
       log_id: {
-        type: Sequelize.BIGINT,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        references: {
+          model: "logs",
+          key: "uuid",
+        },
       },
       uuid: {
         type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
+        unique: true,
+        autoIncrement: false,
       },
       description: {
-        type: Sequelize.ARRAY,
+        type: Sequelize.ARRAY(Sequelize.STRING),
       },
       created_at: {
         type: Sequelize.DATE,
@@ -29,10 +42,12 @@ module.exports = {
         type: Sequelize.DATE,
       },
       created_by: {
-        type: Sequelize.BIGINT,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
       },
       updated_by: {
-        type: Sequelize.BIGINT,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
       },
     })
   },

@@ -8,18 +8,27 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      // back to position
+      HandledPosition.belongsTo(models.Position, {
+        foreignKey: "position_id",
+        
+      })
+      // back to mentor
+      HandledPosition.belongsTo(models.Mentor, {
+        foreignKey: "mentor_id",
+
+      })
     }
   }
   HandledPosition.init(
     {
-      uuid: DataTypes.UUID,
-      position_id: DataTypes.BIGINT,
-      mentor_id: DataTypes.BIGINT,
+      uuid: DataTypes.UUIDV4,
+      position_id: DataTypes.UUIDV4,
+      mentor_id: DataTypes.UUIDV4,
       created_at: DataTypes.DATE,
       updated_at: DataTypes.DATE,
-      created_by: DataTypes.BIGINT,
-      updated_by: DataTypes.BIGINT,
+      created_by: DataTypes.UUIDV4,
+      updated_by: DataTypes.UUIDV4,
     },
     {
       sequelize,

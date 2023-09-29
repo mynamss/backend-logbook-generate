@@ -11,7 +11,10 @@ module.exports = {
       },
       uuid: {
         type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
+        unique: true,
+        autoIncrement: false,
       },
       dept_name: {
         type: Sequelize.STRING,
@@ -23,10 +26,12 @@ module.exports = {
         type: Sequelize.DATE,
       },
       created_by: {
-        type: Sequelize.BIGINT,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
       },
       updated_by: {
-        type: Sequelize.BIGINT,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
       },
     })
   },

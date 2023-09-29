@@ -8,19 +8,26 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      // 1 activity, 1 user
+      Interaction.belongsTo(models.User, {
+        foreignKey: "user_id",
+      })
+      // 1 activity, 1 log
+      Interaction.belongsTo(models.LogDate, {
+        foreignKey: "log_id",
+      })
     }
   }
   Interaction.init(
     {
-      user_id: DataTypes.BIGINT,
-      log_id: DataTypes.BIGINT,
-      uuid: DataTypes.UUID,
+      user_id: DataTypes.UUIDV4,
+      log_id: DataTypes.UUIDV4,
+      uuid: DataTypes.UUIDV4,
       description: DataTypes.ARRAY,
       created_at: DataTypes.DATE,
       updated_at: DataTypes.DATE,
-      created_by: DataTypes.BIGINT,
-      updated_by: DataTypes.BIGINT,
+      created_by: DataTypes.UUIDV4,
+      updated_by: DataTypes.UUIDV4,
     },
     {
       sequelize,

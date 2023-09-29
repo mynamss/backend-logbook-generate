@@ -10,14 +10,27 @@ module.exports = {
         type: Sequelize.BIGINT,
       },
       role_id: {
-        type: Sequelize.BIGINT,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        references: {
+          model: "roles",
+          key: "uuid",
+        },
       },
       position_id: {
-        type: Sequelize.BIGINT,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        references: {
+          model: "positions",
+          key: "uuid",
+        },
       },
       uuid: {
         type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
+        unique: true,
+        autoIncrement: false,
       },
       fullname: {
         type: Sequelize.STRING,
@@ -38,10 +51,12 @@ module.exports = {
         type: Sequelize.DATE,
       },
       created_by: {
-        type: Sequelize.BIGINT,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
       },
       updated_by: {
-        type: Sequelize.BIGINT,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
       },
     })
   },

@@ -1,8 +1,8 @@
-'use strict';
+"use strict"
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('mentors', {
+    await queryInterface.createTable("mentors", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -11,10 +11,13 @@ module.exports = {
       },
       uuid: {
         type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
+        unique: true,
+        autoIncrement: false,
       },
       fullname: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       created_at: {
         type: Sequelize.DATE,
@@ -23,14 +26,16 @@ module.exports = {
         type: Sequelize.DATE,
       },
       created_by: {
-        type: Sequelize.BIGINT,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
       },
       updated_by: {
-        type: Sequelize.BIGINT,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
       },
-    });
+    })
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('mentors');
-  }
-};
+    await queryInterface.dropTable("mentors")
+  },
+}
