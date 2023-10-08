@@ -5,7 +5,8 @@ module.exports = {
   authLogin: async (req, res) => {
     const resultData = await loginUser(req.body)
 
-    return apiResponse(res, resultData)
+    // response
+    res.status(resultData.code).json(resultData)
   },
 
   authRegister: async (req, res) => {

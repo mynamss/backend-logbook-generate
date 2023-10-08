@@ -5,6 +5,8 @@ const { apiResponse } = require("../utils/helper")
 const { users, positions, roles } = models
 const { StatusCodes } = require("http-status-codes")
 const { errorHandler } = require("../middlewares/errorHandler.middleware")
+const jwt = require("jsonwebtoken")
+const secretKey = process.env.SECRET_KEY
 
 module.exports = {
   loginUser: async ({ email, password }) => {
@@ -13,27 +15,44 @@ module.exports = {
       const result = await users.findOne({
         where: {
           email,
-          password,
         },
       })
 
-      if (!result)
-        throw {
-          code: 404,
-          success: false,
-          message: "You are not registered. Register first",
-          data: result,
+      // check email and password
+      if (!result) throw new HttpExceptionValidationError("Email is not registered. Register first")
+      if (password != result.password) throw new HttpExceptionValidationError("Wrong Password. Please check again!")
+
+      // create token
+      const newToken = jwt.sign(
+        {
+          uuid: result.uuid,
+          email: result.email,
+          role_id: result.role_id,
+        },
+        secretKey,
+        { expiresIn: "1d" }
+      )
+
+      await users.update(
+        { token: newToken },
+        {
+          where: {
+            email,
+          },
         }
+      )
 
       // success
       return {
         code: 200,
         success: true,
         message: "Login successfully",
-        data: result,
+        data: {
+          token: newToken,
+        },
       }
     } catch (error) {
-      return error
+      return errorHandler(error)
     }
   },
 
@@ -73,7 +92,7 @@ module.exports = {
         })
         roleId = role.uuid
       }
-      console.log(arrPosition);
+      console.log(arrPosition)
 
       // create user
       const result = await users.create(
