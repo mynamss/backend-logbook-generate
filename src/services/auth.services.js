@@ -7,6 +7,8 @@ const { StatusCodes } = require("http-status-codes")
 const { errorHandler } = require("../middlewares/errorHandler.middleware")
 const jwt = require("jsonwebtoken")
 const secretKey = process.env.SECRET_KEY
+const bcrypt = require("bcrypt")
+const saltRounds = 10
 
 module.exports = {
   loginUser: async ({ email, password }) => {
@@ -20,7 +22,9 @@ module.exports = {
 
       // check email and password
       if (!result) throw new HttpExceptionValidationError("Email is not registered. Register first")
-      if (password != result.password) throw new HttpExceptionValidationError("Wrong Password. Please check again!")
+
+      const isMatchPassword = bcrypt.compareSync(password, result.password)
+      if (!isMatchPassword) throw new HttpExceptionValidationError("Wrong Password. Please check again!")
 
       // create token
       const newToken = jwt.sign(
@@ -34,7 +38,11 @@ module.exports = {
       )
 
       await users.update(
-        { token: newToken },
+        {
+          token: newToken,
+          updated_at: new Date(),
+          updated_by: result.uuid,
+        },
         {
           where: {
             email,
@@ -92,7 +100,9 @@ module.exports = {
         })
         roleId = role.uuid
       }
-      console.log(arrPosition)
+
+      // Bcrypt password
+      const hashedPassword = bcrypt.hashSync(password, saltRounds)
 
       // create user
       const result = await users.create(
@@ -100,7 +110,7 @@ module.exports = {
           uuid: uuidv4(),
           fullname,
           email,
-          password,
+          password: hashedPassword,
           role_id: roleId,
           position_id: positionId,
           created_at: new Date(),
