@@ -9,17 +9,17 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // 1 log, 1 activity
-      LogDate.hasOne(models.Activity, {
+      LogDate.hasOne(models.activities, {
         sourceKey: "uuid",
         foreignKey: "log_id"
       })
       // 1 log, 1 output
-      LogDate.hasOne(models.Output, {
+      LogDate.hasOne(models.outputs, {
         sourceKey: "uuid",
         foreignKey: "log_id"
       })
       // 1 log, 1 interaction
-      LogDate.hasOne(models.Interaction, {
+      LogDate.hasOne(models.interactions, {
         sourceKey: "uuid",
         foreignKey: "log_id"
       })
@@ -39,6 +39,7 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "logs",
       underscored: true,
+      timestamps: false,
     }
   )
   return LogDate

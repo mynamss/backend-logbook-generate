@@ -9,12 +9,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // back to position
-      HandledPosition.belongsTo(models.Position, {
+      HandledPosition.belongsTo(models.positions, {
         foreignKey: "position_id",
         
       })
       // back to mentor
-      HandledPosition.belongsTo(models.Mentor, {
+      HandledPosition.belongsTo(models.mentors, {
         foreignKey: "mentor_id",
 
       })
@@ -34,6 +34,7 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "handled_positions",
       underscored: true,
+      timestamps: false,
     }
   )
   return HandledPosition

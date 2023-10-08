@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // 1 role, many user
-      Role.hasMany(models.User, {
+      Role.hasMany(models.users, {
         sourceKey: "uuid",
         foreignKey: "role_id",
       })
@@ -28,6 +28,7 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "roles",
       underscored: true,
+      timestamps: false,
     }
   )
   return Role

@@ -9,11 +9,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // many position, many mentor
-      Position.belongsToMany(models.Mentor, {
-        through: models.HandledPosition,
+      Position.belongsToMany(models.mentors, {
+        through: models.handled_positions,
       })
       // 1 position, many user
-      Position.hasMany(models.USer, {
+      Position.hasMany(models.users, {
         sourceKey: "uuid",
         foreignKey: "position_id",
       })
@@ -32,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "positions",
       underscored: true,
+      timestamps: false,
     }
   )
   return Position

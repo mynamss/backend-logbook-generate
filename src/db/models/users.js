@@ -9,26 +9,26 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // 1 user, 1 role
-      User.belongsTo(models.Role, {
+      User.belongsTo(models.roles, {
         foreignKey: "role_id",
       })
       // 1 user, 1 position
-      User.belongsTo(models.Position, {
+      User.belongsTo(models.positions, {
         foreignKey: "position_id",
       })
 
       // 1 user, many activity
-      User.hasMany(models.Activity, {
+      User.hasMany(models.activities, {
         sourceKey: "uuid",
         foreignKey: "user_id",
       })
       // 1 user, many output
-      User.hasMany(models.Output, {
+      User.hasMany(models.outputs, {
         sourceKey: "uuid",
         foreignKey: "user_id",
       })
       // 1 user, many interaction
-      User.hasMany(models.Interaction, {
+      User.hasMany(models.interactions, {
         sourceKey: "uuid",
         foreignKey: "user_id",
       })
@@ -52,6 +52,7 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "users",
       underscored: true,
+      timestamps: false,
     }
   )
   return User

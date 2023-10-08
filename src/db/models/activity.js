@@ -10,11 +10,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // 1 activity, 1 user
-      Activity.belongsTo(models.User, {
+      Activity.belongsTo(models.users, {
         foreignKey: "user_id",
       })
       // 1 activity, 1 log
-      Activity.belongsTo(models.LogDate, {
+      Activity.belongsTo(models.logs, {
         foreignKey: "log_id",
       })
     }
@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       user_id: DataTypes.UUIDV4,
       log_id: DataTypes.UUIDV4,
       uuid: DataTypes.UUIDV4,
-      description: DataTypes.ARRAY,
+      description: DataTypes.ARRAY(DataTypes.STRING),
       created_at: DataTypes.DATE,
       updated_at: DataTypes.DATE,
       created_by: DataTypes.UUIDV4,
@@ -34,6 +34,7 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "activities",
       underscored: true,
+      timestamps: false,
     }
   )
   return Activity

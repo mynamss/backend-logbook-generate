@@ -9,8 +9,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // 1 mentor, many position
-      Mentor.belongsToMany(models.Position, {
-        through: models.HandledPosition,
+      Mentor.belongsToMany(models.positions, {
+        through: models.handled_positions,
       })
     }
   }
@@ -27,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "mentors",
       underscored: true,
+      timestamps: false,
     }
   )
   return Mentor
