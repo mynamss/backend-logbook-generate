@@ -1,9 +1,9 @@
 const models = require("../db/models")
-const { users, positions, roles } = models
+const { users, positions, roles, user_sessions } = models
 // Response
 const { v4: uuidv4 } = require("uuid")
 const { StatusCodes } = require("http-status-codes")
-const { apiResponse } = require("../utils/helper")
+const { apiResponse, createTimestamps, updateTimestamps } = require("../utils/helper")
 // Exception
 const { HttpExceptionValidationError, HttpException } = require("../exceptions/httpException")
 const { errorHandler } = require("../middlewares/errorHandler.middleware")
@@ -14,7 +14,7 @@ const secretKey = process.env.SECRET_KEY
 const saltRounds = 10
 
 module.exports = {
-  loginUser: async ({ email, password }) => {
+  loginUser: async ({ email, password }, userAgent) => {
     try {
       // get datas
       const result = await users.findOne({
@@ -23,9 +23,10 @@ module.exports = {
         },
       })
 
-      // check email and password
+      // check email
       if (!result) throw new HttpExceptionValidationError("Email is not registered. Register first")
 
+      // check password
       const isMatchPassword = bcrypt.compareSync(password, result.password)
       if (!isMatchPassword) throw new HttpExceptionValidationError("Wrong Password. Please check again!")
 
@@ -40,11 +41,12 @@ module.exports = {
         { expiresIn: "1d" }
       )
 
-      await users.update(
+      if (!newToken) throw new HttpException(422, false, "Token not created!")
+
+      const killSession = await users.update(
         {
           token: newToken,
-          updated_at: new Date(),
-          updated_by: result.uuid,
+          ...updateTimestamps(result.uuid),
         },
         {
           where: {
@@ -52,6 +54,33 @@ module.exports = {
           },
         }
       )
+
+      if (!killSession.includes(1)) throw new HttpException(422, false, "Token not created!")
+
+      // De-activate existing session and create new session
+      await user_sessions.update(
+        {
+          status: "EXPIRED",
+          ...updateTimestamps(result.uuid),
+        },
+        {
+          where: {
+            user_id: result.uuid,
+            status: "ACTIVE",
+          },
+        }
+      )
+
+      // create session
+      const newSession = await user_sessions.create({
+        user_id: result.uuid,
+        status: "ACTIVE",
+        user_agent: userAgent,
+        token: newToken,
+        ...createTimestamps(result.uuid),
+      })
+
+      if (!newSession) throw new HttpException(422, false, "Session not created!")
 
       // success
       return {
