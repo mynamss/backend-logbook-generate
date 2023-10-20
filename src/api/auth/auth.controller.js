@@ -4,7 +4,7 @@ const { loginUser, createUser } = require("../../services/auth.services")
 module.exports = {
   authLogin: async (req, res) => {
     const resultData = await loginUser(req.body)
-
+    console.log("AUTH CONTROLLER");
     // response
     res.status(resultData.code).json(resultData)
   },

@@ -1,13 +1,16 @@
-const { v4: uuidv4 } = require("uuid")
 const models = require("../db/models")
-const { HttpExceptionValidationError, HttpException } = require("../exceptions/httpException")
-const { apiResponse } = require("../utils/helper")
 const { users, positions, roles } = models
+// Response
+const { v4: uuidv4 } = require("uuid")
 const { StatusCodes } = require("http-status-codes")
+const { apiResponse } = require("../utils/helper")
+// Exception
+const { HttpExceptionValidationError, HttpException } = require("../exceptions/httpException")
 const { errorHandler } = require("../middlewares/errorHandler.middleware")
+// Token and Hashing
 const jwt = require("jsonwebtoken")
-const secretKey = process.env.SECRET_KEY
 const bcrypt = require("bcrypt")
+const secretKey = process.env.SECRET_KEY
 const saltRounds = 10
 
 module.exports = {
