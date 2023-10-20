@@ -1,10 +1,17 @@
-const { v4: uuidv4 } = require("uuid")
 const models = require("../db/models")
-const { HttpExceptionValidationError, HttpException } = require("../exceptions/httpException")
-const { apiResponse } = require("../utils/helper")
 const { users, positions, roles } = models
+// Response
+const { v4: uuidv4 } = require("uuid")
 const { StatusCodes } = require("http-status-codes")
+const { apiResponse } = require("../utils/helper")
+// Exception
+const { HttpExceptionValidationError, HttpException } = require("../exceptions/httpException")
 const { errorHandler } = require("../middlewares/errorHandler.middleware")
+// Token and Hashing
+const jwt = require("jsonwebtoken")
+const bcrypt = require("bcrypt")
+const secretKey = process.env.SECRET_KEY
+const saltRounds = 10
 
 module.exports = {
   loginUser: async ({ email, password }) => {
@@ -13,27 +20,50 @@ module.exports = {
       const result = await users.findOne({
         where: {
           email,
-          password,
         },
       })
 
-      if (!result)
-        throw {
-          code: 404,
-          success: false,
-          message: "You are not registered. Register first",
-          data: result,
+      // check email and password
+      if (!result) throw new HttpExceptionValidationError("Email is not registered. Register first")
+
+      const isMatchPassword = bcrypt.compareSync(password, result.password)
+      if (!isMatchPassword) throw new HttpExceptionValidationError("Wrong Password. Please check again!")
+
+      // create token
+      const newToken = jwt.sign(
+        {
+          uuid: result.uuid,
+          email: result.email,
+          role_id: result.role_id,
+        },
+        secretKey,
+        { expiresIn: "1d" }
+      )
+
+      await users.update(
+        {
+          token: newToken,
+          updated_at: new Date(),
+          updated_by: result.uuid,
+        },
+        {
+          where: {
+            email,
+          },
         }
+      )
 
       // success
       return {
         code: 200,
         success: true,
         message: "Login successfully",
-        data: result,
+        data: {
+          token: newToken,
+        },
       }
     } catch (error) {
-      return error
+      return errorHandler(error)
     }
   },
 
@@ -73,7 +103,9 @@ module.exports = {
         })
         roleId = role.uuid
       }
-      console.log(arrPosition);
+
+      // Bcrypt password
+      const hashedPassword = bcrypt.hashSync(password, saltRounds)
 
       // create user
       const result = await users.create(
@@ -81,7 +113,7 @@ module.exports = {
           uuid: uuidv4(),
           fullname,
           email,
-          password,
+          password: hashedPassword,
           role_id: roleId,
           position_id: positionId,
           created_at: new Date(),

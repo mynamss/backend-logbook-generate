@@ -1,30 +1,73 @@
-const express = require("express")
-const { check, validationResult } = require("express-validator")
-
-const runValidation = (req, res, next) => {
-  const error = validationResult(req)
-  if (!error.isEmpty()) {
-    const deepErrors = _.flattenDeep(error.array().map((errors) => errors.nestedErrors))
-    const detailError = deepErrors.map((err) => err.msg)
-    console.log("CUMA SAMPAI SINI PAK: ", detailError)
-    return response(false, 422, error.array()[0].msg, null, detailError, res)
-  }
-  next()
-}
+const { body, validationResult } = require("express-validator")
+const { errorHandler } = require("./errorHandler.middleware")
+const { HttpException } = require("../exceptions/httpException")
 
 module.exports = {
-  loginValidate: (req, res, next) => {
-    
-    console.log("masuk sini", result)
+  // BASE VALIDATION FUNCTION HANDLER
+  runValidation: (req, res, next) => {
+    // Get error if exist
+    const result = validationResult(req)
 
-    if (result.isEmpty()) {
-      return res.send(`Hello, Gais!`)
+    // Get error if exist
+    if (!result.isEmpty()) {
+      return errorHandler({
+        code: 422,
+        success: false,
+        message: "Validation Error",
+        errorsList: result.array(),
+      })
+        .then((errors) => {
+          return res.status(errors.code).json(errors)
+        })
+        .catch((errors) => {
+          throw new HttpException(500, false, "INTERNAL SERVER ERROR")
+        })
     }
-
-    body("email").isEmail().withMessage("Email not valid")
-    body("password").isEmpty().withMessage("Password cannot be empty").isString().isAlpha().withMessage("Letters only")
-
+    // Validation passed and continued to controller
     next()
   },
-  registerValidate: (next) => {},
+
+  loginValidation: [
+    body("email", "Email is not valid")
+      .isEmail()
+      .isLength({
+        min: 13,
+        max: 30,
+      })
+      .withMessage("Minimum length is 13"),
+    body("password", "Password must be at least 8 characters long and include at least 1 lowercase letter, 1 uppercase letter, 1 number, and 1 special character.").isStrongPassword({
+      minLength: 8,
+      minLowercase: 1,
+      minNumbers: 1,
+      minSymbols: 1,
+      minUppercase: 1,
+    }),
+  ],
+
+  registerValidation: [
+    // fullname
+    body("fullname", "Name is not valid")
+      .isAlphanumeric("en-US", {
+        ignore: " ",
+      })
+      .withMessage("Name can only contain letters and number"),
+    // email
+    body("email", "Email is not valid")
+      .isEmail()
+      .isLength({
+        min: 13,
+        max: 30,
+      })
+      .withMessage("Minimum length is 13"),
+    // password
+    body("password", "Password must be at least 8 characters long, 1 lowercase letter, 1 uppercase letter, 1 number, and 1 special character.").isStrongPassword({
+      minLength: 8,
+      minLowercase: 1,
+      minNumbers: 1,
+      minSymbols: 1,
+      minUppercase: 1,
+    }),
+
+    body("position_id", "FALSE UUID").isUUID("4").withMessage("ID Position is not valid UUID"),
+  ],
 }

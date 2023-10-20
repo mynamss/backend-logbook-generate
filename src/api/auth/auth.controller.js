@@ -4,8 +4,9 @@ const { loginUser, createUser } = require("../../services/auth.services")
 module.exports = {
   authLogin: async (req, res) => {
     const resultData = await loginUser(req.body)
-
-    return apiResponse(res, resultData)
+    console.log("AUTH CONTROLLER");
+    // response
+    res.status(resultData.code).json(resultData)
   },
 
   authRegister: async (req, res) => {
