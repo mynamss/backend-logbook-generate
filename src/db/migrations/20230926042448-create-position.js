@@ -11,27 +11,27 @@ module.exports = {
       },
       uuid: {
         type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
-        allowNull: false,
+        unique: true,
+        autoIncrement: false,
       },
       dept_name: {
         type: Sequelize.STRING,
       },
       created_at: {
         type: Sequelize.DATE,
-        allowNull: false,
       },
       updated_at: {
         type: Sequelize.DATE,
-        allowNull: false,
       },
       created_by: {
-        type: Sequelize.BIGINT,
-        allowNull: true,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
       },
       updated_by: {
-        type: Sequelize.BIGINT,
-        allowNull: true,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
       },
     })
   },

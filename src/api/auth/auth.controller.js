@@ -1,13 +1,18 @@
-module.exports = {
-  authLogin: (req, res) => {
-    const { email, password } = req.body
+const { apiResponse } = require("../../utils/helper")
+const { loginUser, createUser } = require("../../services/auth.services")
 
-    res.json({ msg: "login" })
+module.exports = {
+  authLogin: async (req, res) => {
+    const resultData = await loginUser(req.body)
+
+    return apiResponse(res, resultData)
   },
 
-  authRegister: (req, res) => {
-    const { name, email, password } = req.body
+  authRegister: async (req, res) => {
+    // service process
+    const resultData = await createUser(req.body)
 
-    res.json({ msg: "register" })
+    // response
+    res.status(resultData.code).json(resultData)
   },
 }

@@ -11,32 +11,40 @@ module.exports = {
       },
       uuid: {
         type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
-        allowNull: false,
+        unique: true,
+        autoIncrement: false,
       },
       position_id: {
-        type: Sequelize.BIGINT,
-        allowNull: false,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        references: {
+          model: "positions",
+          key: "uuid"
+        },
       },
       mentor_id: {
-        type: Sequelize.BIGINT,
-        allowNull: false,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        references: {
+          model: "mentors",
+          key: "uuid",
+        },
       },
       created_at: {
         type: Sequelize.DATE,
-        allowNull: false,
       },
       updated_at: {
         type: Sequelize.DATE,
-        allowNull: false,
       },
       created_by: {
-        type: Sequelize.BIGINT,
-        allowNull: true,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
       },
       updated_by: {
-        type: Sequelize.BIGINT,
-        allowNull: true,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
       },
     })
   },

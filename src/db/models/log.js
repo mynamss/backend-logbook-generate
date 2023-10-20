@@ -8,22 +8,38 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      // 1 log, 1 activity
+      LogDate.hasOne(models.activities, {
+        sourceKey: "uuid",
+        foreignKey: "log_id"
+      })
+      // 1 log, 1 output
+      LogDate.hasOne(models.outputs, {
+        sourceKey: "uuid",
+        foreignKey: "log_id"
+      })
+      // 1 log, 1 interaction
+      LogDate.hasOne(models.interactions, {
+        sourceKey: "uuid",
+        foreignKey: "log_id"
+      })
+
     }
   }
   LogDate.init(
     {
-      uuid: DataTypes.UUID,
+      uuid: DataTypes.UUIDV4,
       log_date: DataTypes.STRING,
       created_at: DataTypes.DATE,
       updated_at: DataTypes.DATE,
-      created_by: DataTypes.BIGINT,
-      updated_by: DataTypes.BIGINT,
+      created_by: DataTypes.UUIDV4,
+      updated_by: DataTypes.UUIDV4,
     },
     {
       sequelize,
       modelName: "logs",
       underscored: true,
+      timestamps: false,
     }
   )
   return LogDate
