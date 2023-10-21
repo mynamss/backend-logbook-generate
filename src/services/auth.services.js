@@ -41,9 +41,10 @@ module.exports = {
         { expiresIn: "1d" }
       )
 
+      // check if failed create token
       if (!newToken) throw new HttpException(422, false, "Token not created!")
 
-      const killSession = await users.update(
+      const updateToken = await users.update(
         {
           token: newToken,
           ...updateTimestamps(result.uuid),
@@ -55,10 +56,11 @@ module.exports = {
         }
       )
 
-      if (!killSession.includes(1)) throw new HttpException(422, false, "Token not created!")
+      // check if failed update
+      if (!updateToken.includes(1)) throw new HttpException(422, false, "Token not created!")
 
       // De-activate existing session and create new session
-      await user_sessions.update(
+      const killSession = await user_sessions.update(
         {
           status: "EXPIRED",
           ...updateTimestamps(result.uuid),
@@ -71,15 +73,24 @@ module.exports = {
         }
       )
 
-      // create session
-      const newSession = await user_sessions.create({
-        user_id: result.uuid,
-        status: "ACTIVE",
-        user_agent: userAgent,
-        token: newToken,
-        ...createTimestamps(result.uuid),
-      })
+      // check if failed update
+      if (!killSession.includes(1)) throw new HttpException(422, false, "Session not created!")
 
+      // create session
+      const newSession = await user_sessions.create(
+        {
+          user_id: result.uuid,
+          status: "ACTIVE",
+          user_agent: userAgent,
+          token: newToken,
+          ...createTimestamps(result.uuid),
+        },
+        {
+          raw: true,
+        }
+      )
+
+      // check if session not created
       if (!newSession) throw new HttpException(422, false, "Session not created!")
 
       // success
@@ -105,7 +116,7 @@ module.exports = {
         },
       })
       // if exist (user registered)
-      if (isExistUser) throw new HttpExceptionValidationError(`Email has been registered. Login is best choices`)
+      if (isExistUser) throw new HttpExceptionValidationError(`Email has been registered. Login is the best choices`)
 
       // check position by position_id
       const isExistPosition = await positions.findOne({
@@ -117,14 +128,17 @@ module.exports = {
       if (!isExistPosition) throw new HttpExceptionValidationError(`Position not found. Please contact your admin`)
 
       // get role by position_id
-      const arrPosition = []
       let roleId = ""
-      const allPosition = await positions.findAll()
-      allPosition.forEach((element) => {
-        arrPosition.push(element.uuid)
+      const allPosition = await positions.findAll({
+        raw: true,
+        attributes: ["uuid"],
+      })
+      // Mapping all position
+      const uuidPosition = allPosition.map((element) => {
+        return element.uuid
       })
 
-      if (arrPosition.includes(positionId)) {
+      if (uuidPosition.includes(positionId)) {
         const role = await roles.findOne({
           where: {
             role_name: "Mahasiswa",
@@ -137,7 +151,7 @@ module.exports = {
       const hashedPassword = bcrypt.hashSync(password, saltRounds)
 
       // create user
-      const result = await users.create(
+      const newUser = await users.create(
         {
           uuid: uuidv4(),
           fullname,
@@ -150,15 +164,24 @@ module.exports = {
         },
         {
           raw: true,
+          fields: ["uuid", "fullname", "email"],
         }
       )
+
+      console.log("NEW : ", newUser.email)
+
       // fill created_by and updated_by
       await users.update(
-        { created_by: result.uuid, updated_by: result.uuid },
+        {
+          created_by: newUser.uuid,
+          updated_by: newUser.uuid,
+        },
         {
           where: {
-            uuid: result.uuid,
+            uuid: newUser.uuid,
           },
+          // returning: ["uuid", "fullname", "email"],
+          // raw: true,
         }
       )
 
@@ -168,9 +191,9 @@ module.exports = {
         success: true,
         message: "Success create new user",
         data: {
-          uuid: result.uuid,
-          fullname: result.fullname,
-          email: result.email,
+          uuid: newUser.uuid,
+          fullname: newUser.fullname,
+          email: newUser.email,
         },
       })
     } catch (error) {
