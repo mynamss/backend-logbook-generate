@@ -168,8 +168,6 @@ module.exports = {
         }
       )
 
-      console.log("NEW : ", newUser.email)
-
       // fill created_by and updated_by
       await users.update(
         {

@@ -19,7 +19,7 @@ module.exports = {
     }
   },
 
-  getOneUser: async (userId) => {
+  getUserById: async (userId) => {
     try {
       // get data
       const result = await users.findOne({

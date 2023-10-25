@@ -1,17 +1,19 @@
-const { getUsers, getOneUser } = require("../../services/user.services")
+const { getUsers, getUserById } = require("../../services/user.services")
 const { apiResponse } = require("../../utils/helper")
 
 module.exports = {
-  getAllUser: async (req, res) => {
+  getUsers: async (req, res) => {
+    // service process
     const resultData = await getUsers()
 
-    return apiResponse(res, resultData)
+    // response
+    res.status(resultData.code).json(resultData)
   },
   getUserById: async (req, res) => {
-    const { id } = req.params
+    // service process
+    const resultData = await getUserById(req.params.id)
 
-    const resultData = await getOneUser(id)
-    console.log("ISI: ", resultData)
-    return apiResponse(res, resultData)
+    // response
+    res.status(resultData.code).json(resultData)
   },
 }

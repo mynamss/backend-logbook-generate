@@ -13,4 +13,10 @@ class HttpExceptionValidationError extends HttpException {
   }
 }
 
-module.exports = { HttpException, HttpExceptionValidationError }
+class HttpExceptionUnauthorized extends HttpException {
+  constructor(message) {
+    super(401, false, message)
+  }
+}
+
+module.exports = { HttpException, HttpExceptionValidationError, HttpExceptionUnauthorized }
