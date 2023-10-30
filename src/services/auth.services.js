@@ -2,7 +2,7 @@ const models = require("../db/models")
 const { users, positions, roles, user_sessions } = models
 // Response
 const { v4: uuidv4 } = require("uuid")
-const { StatusCodes } = require("http-status-codes")
+const { StatusCodes  } = require("http-status-codes")
 const { apiResponse, createTimestamps, updateTimestamps } = require("../utils/helper")
 // Exception
 const { HttpExceptionValidationError, HttpException } = require("../exceptions/httpException")

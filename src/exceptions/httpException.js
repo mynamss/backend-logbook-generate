@@ -7,6 +7,12 @@ class HttpException extends Error {
   }
 }
 
+// Not Found
+class HttpExceptionNotFound extends HttpException {
+  constructor(message) {
+    super(404, false, message)
+  }
+}
 class HttpExceptionValidationError extends HttpException {
   constructor(message) {
     super(422, false, message)
@@ -19,4 +25,4 @@ class HttpExceptionUnauthorized extends HttpException {
   }
 }
 
-module.exports = { HttpException, HttpExceptionValidationError, HttpExceptionUnauthorized }
+module.exports = { HttpException, HttpExceptionValidationError, HttpExceptionUnauthorized, HttpExceptionNotFound }
