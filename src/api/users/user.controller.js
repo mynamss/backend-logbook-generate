@@ -1,5 +1,4 @@
 const { getUsers, getUserById } = require("../../services/user.services")
-const { apiResponse } = require("../../utils/helper")
 
 module.exports = {
   getUsers: async (req, res) => {
